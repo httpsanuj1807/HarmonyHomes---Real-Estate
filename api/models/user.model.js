@@ -7,7 +7,7 @@
         unique: true
     },
     email:{
-        type : "string",
+        type : "string", 
         required : true,
         unique: true
     },
