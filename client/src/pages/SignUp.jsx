@@ -9,6 +9,7 @@ export default function SignUp() {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
+    setError(null);
     setFormData((prevState)=>{
       return {
         ...prevState,
