@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import {useDispatch, useSelector} from 'react-redux';
+import {userTypingAgain, signInStart, signInSuccess, signInFailure} from '../redux/user/userSlice.js';
 
 export default function SignUp() {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const {error, loading} = useSelector((state)=> state.user);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setError(null);
+    dispatch(userTypingAgain());
     setFormData((prevState)=>{
       return {
         ...prevState,
@@ -20,7 +22,7 @@ export default function SignUp() {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
-    setLoading(true);
+    dispatch(signInStart());
     try{
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
@@ -30,18 +32,16 @@ export default function SignUp() {
         body: JSON.stringify(formData)
       });
       const data = await res.json();
-      setLoading(false);
       if(data.success === false){
-        setError(data.message);
+        dispatch(signInFailure(data.message));
         return;
       }
       console.log(data);
-      setError(null);
+      dispatch(signInSuccess(data));
       navigate('/');
     }
     catch(err){
-      setLoading(false);
-      setError(err.message);
+      dispatch(signInFailure(err.message));
     }
   }
   return (
