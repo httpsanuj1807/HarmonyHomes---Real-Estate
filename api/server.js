@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
 
-
 const app = express();
 
 
@@ -19,7 +18,7 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING)
 }
 )
 .catch((error) => {
-    console.log('Error connecting database.');
+    console.log('Error connecting database.', error);
 }
 );
 
