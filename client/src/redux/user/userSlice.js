@@ -11,9 +11,6 @@ const userSlice = createSlice({
     name : 'user',
     initialState,
     reducers : {
-        userTypingAgain : (state) => {
-            state.error = null;
-        },
         signInStart : (state) =>{
             state.loading = true;
         },
