@@ -6,11 +6,11 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "harmony-home-9043b.firebaseapp.com",
-  projectId: "harmony-home-9043b",
-  storageBucket: "harmony-home-9043b.appspot.com",
-  messagingSenderId: "74499041031",
-  appId: "1:74499041031:web:a294f4c005c4fb0dd007a2"
+  authDomain: "harmony-homess.firebaseapp.com",
+  projectId: "harmony-homess",
+  storageBucket: "harmony-homess.appspot.com",
+  messagingSenderId: "916019124327",
+  appId: "1:916019124327:web:6c986e539ce9cff86c9cc2"
 };
 
 // Initialize Firebase
