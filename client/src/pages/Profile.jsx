@@ -2,6 +2,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
 import { app } from '../firebase.js';
+import { Link } from 'react-router-dom';
 import {updateProfileStart, updateProfileSuccess, updateProfileFailure,
         deleteUserStart, deleteUserSuccess, deleteUserFailure, 
         signOutStart, signOutSuccess, signOutFailure} from '../redux/user/userSlice.js';
@@ -156,6 +157,9 @@ export default function Profile() {
         <input className='p-3 rounded-lg border' type='password' placeholder='Password' id='password' onChange={handleChange
         } />
         <button disabled={loading} type='submit' className='bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 font-semibold disabled:opacity-80'>{loading ? 'Loding' : 'Update'}</button>
+        <Link to={'/create-listing'} className='bg-green-700 text-center text-white uppercase font-semibold p-3 rounded-lg hover:opacity-95'>
+        Create Listing
+        </Link>
         <div className='flex justify-between text-red-700 mt-5 font-semibold'>
           <span onClick={handleUserDelete} className='cursor-pointer'>Delete account</span>
           <span onClick={handleUserSignOut} className='cursor-pointer'>Sign out</span>
