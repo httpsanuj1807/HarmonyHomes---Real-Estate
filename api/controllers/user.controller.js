@@ -3,15 +3,13 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 
 export const updateProfile = async(req, res, next) => {
-    console.log(req.body);
-    console.log(req.user);
     if(req.params.id != req.user.id){
         return next(errorHandler(401, 'You are only allowed to make change to your own profile only.'))
     }
 
     try{
-        if(req.user.password){
-            req.user.password = bcrypt.hashSync(req.user.password, 10);
+        if(req.body.password){
+            req.body.password = bcrypt.hashSync(req.body.password, 10);
         }
         const updatedUser = await User.findByIdAndUpdate(req.params.id, {
             $set: {

@@ -1,17 +1,21 @@
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
-import { app } from '../firebase.js'
+import { app } from '../firebase.js';
+import {updateProfileStart, updateProfileSuccess, updateProfileFailure} from '../redux/user/userSlice.js';
+
 
 
 export default function Profile() {
-  const{ currentUser } = useSelector(state => state.user); 
+  const dispatch  = useDispatch();
+  const{ currentUser, loading, error } = useSelector(state => state.user); 
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [wrongFileType, setWrongFileType] = useState(false);
+  const [isUpdateSucces, setIsUpdateSuccess] = useState(false);
   useEffect(()=>{
     if(file){
       if(file.type.split('/')[0] !== 'image'){
@@ -22,6 +26,7 @@ export default function Profile() {
       handleFileUpload(file);
     }
   }, [file]);
+  console.log("Current user is: ",currentUser);
 
   const handleFileUpload = (file) => {
     // get access to firebase storage by providing our app
@@ -53,29 +58,71 @@ export default function Profile() {
       });
     }
   );
+  }
 
+  const handleChange = (e) => {
+    setIsUpdateSuccess(false);
+    setFormData({
+      ...formData,
+      [e.target.id] : e.target.value
+    })
+  }
+  
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    try{
+      dispatch(updateProfileStart());
+      setIsUpdateSuccess(false);
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
 
+      const data = await res.json();
+      if(data.success == false){
+        dispatch(updateProfileFailure(data.message));
 
+        return;
+      }
+      dispatch(updateProfileSuccess(data));
+      setFilePercentage(0);
+      setIsUpdateSuccess(true);
+    }
+    catch(err){
+      dispatch(updateProfileFailure(err.message));
+    }
   }
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='font-semibold text-3xl my-7 text-center'>Profile</h1>
-      <form className='flex flex-col gap-4'>
-        <input onChange={(e) => setFile(e.target.files[0])} hidden ref={fileRef} type='file' accept='images/*' />
-        <img onClick={() => fileRef.current.click()} className='rounded-full h-24 w-24 self-center object-cover cursor-pointer mt-2' src={formData.avatar || currentUser.avatar} alt='profile-img'></img>
+      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+        <input onChange={(e) => setFile(e.target.files[0])}  hidden ref={fileRef} type='file' accept='images/*' />
+        <img onClick={() => {
+          setFilePercentage(0);
+          setIsUpdateSuccess(false);
+          fileRef.current.click();
+        }} className='rounded-full h-24 w-24 self-center object-cover cursor-pointer mt-2' src={formData.avatar || currentUser.avatar} alt='profile-img'></img>
         {(wrongFileType) ? (<p className='text-red-700 text-sm self-center'>Only images are allowed</p>) : (null)}
         {(fileUploadError) ? (<p className='text-red-700 text-sm self-center'>Error image upload. File size must not exceed 2mb </p>) : (filePercentage > 0 && filePercentage < 100) ? (<p className='text-slate-700 text-sm self-center'>Uploading {filePercentage}%</p>) : ((filePercentage == 100) ? (<p className='text-green-700 text-sm self-center'>Image successfully uploaded!</p>) : (null))}
 
-        <input className='p-3 rounded-lg border' type='text' placeholder='Username' id='username' />
-        <input className='p-3 rounded-lg border' type='email' placeholder='Email' id='email' />
-        <input className='p-3 rounded-lg border' type='password' placeholder='Password' id='password' />
-        <button className='bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 font-semibold disabled:opacity-80'>Update</button>
+        <input className='p-3 rounded-lg border' type='text' placeholder='Username' id='username' defaultValue={currentUser.username} onChange={handleChange
+        } />
+        <input className='p-3 rounded-lg border' type='email' placeholder='Email' id='email' defaultValue={currentUser.email} onChange={handleChange
+        } />
+        <input className='p-3 rounded-lg border' type='password' placeholder='Password' id='password' onChange={handleChange
+        } />
+        <button disabled={loading} type='submit' className='bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 font-semibold disabled:opacity-80'>{loading ? 'Loding' : 'Update'}</button>
         <div className='flex justify-between text-red-700 mt-5 font-semibold'>
           <span className='cursor-pointer'>Delete account</span>
           <span className='cursor-pointer'>Sign out</span>
         </div>
       </form>
+      {error && <p className='text-red-500 mt-4'>{error}</p>}
+      {isUpdateSucces && <p className='text-green-700 mt-4'>Profile updated successfully!</p>}
     </div>
   )
 }

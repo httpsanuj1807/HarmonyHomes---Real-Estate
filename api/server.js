@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
 import cookieParser from 'cookie-parser';
-import cors from 'cors';
 
 const app = express();
 
@@ -28,7 +27,6 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING)
 // Middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors());
 app.use(cookieParser());
 
 // routes middlewares
