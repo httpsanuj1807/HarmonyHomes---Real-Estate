@@ -75,3 +75,12 @@ export const google = async(req, res, next) =>{
         next(err);
     }
 };
+
+export const signOut = async(req, res, next) => {
+    try{
+        res.clearCookie('jwt').status(200).json('Sign out successfully');
+    }
+    catch(err){
+        next(err);
+    }
+}

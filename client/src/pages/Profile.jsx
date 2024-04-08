@@ -2,7 +2,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import { useRef, useState, useEffect } from 'react';
 import {getStorage, ref, uploadBytesResumable, getDownloadURL} from 'firebase/storage';
 import { app } from '../firebase.js';
-import {updateProfileStart, updateProfileSuccess, updateProfileFailure} from '../redux/user/userSlice.js';
+import {updateProfileStart, updateProfileSuccess, updateProfileFailure,
+        deleteUserStart, deleteUserSuccess, deleteUserFailure, 
+        signOutStart, signOutSuccess, signOutFailure} from '../redux/user/userSlice.js';
 
 
 
@@ -26,7 +28,6 @@ export default function Profile() {
       handleFileUpload(file);
     }
   }, [file]);
-  console.log("Current user is: ",currentUser);
 
   const handleFileUpload = (file) => {
     // get access to firebase storage by providing our app
@@ -96,6 +97,45 @@ export default function Profile() {
     }
   }
 
+  const handleUserDelete = async() => {
+    try{
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method : 'DELETE',
+      });
+
+      const data = await res.json();
+
+      if(data.success == false){
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess()); // empty bcoz to redirect to sign in page
+    }
+    catch(err){
+      dispatch(deleteUserFailure(err.message));
+    }
+  }
+
+  const handleUserSignOut = async() => {
+    try{
+      dispatch(signOutStart());
+      const res = await fetch(`/api/auth/signout`);
+      const data = await res.json();
+
+      if(data.success == false){
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(signOutSuccess()); // empty bcoz to redirect to sign in page
+    }
+    catch(err){
+      dispatch(signOutFailure(err.message));
+    }
+  };
+
+
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='font-semibold text-3xl my-7 text-center'>Profile</h1>
@@ -117,8 +157,8 @@ export default function Profile() {
         } />
         <button disabled={loading} type='submit' className='bg-slate-700 p-3 rounded-lg text-white uppercase hover:opacity-95 font-semibold disabled:opacity-80'>{loading ? 'Loding' : 'Update'}</button>
         <div className='flex justify-between text-red-700 mt-5 font-semibold'>
-          <span className='cursor-pointer'>Delete account</span>
-          <span className='cursor-pointer'>Sign out</span>
+          <span onClick={handleUserDelete} className='cursor-pointer'>Delete account</span>
+          <span onClick={handleUserSignOut} className='cursor-pointer'>Sign out</span>
         </div>
       </form>
       {error && <p className='text-red-500 mt-4'>{error}</p>}

@@ -28,3 +28,16 @@ export const updateProfile = async(req, res, next) => {
     }
 
 }
+
+export const deleteProfile = async(req, res, next) => {
+    if(req.params.id != req.user.id){
+        return next(errorHandler(401, 'You are only allowed to delete your own account.'))
+    }
+    try{
+        await User.findByIdAndDelete(req.user.id);
+        res.clearCookie('jwt').status(200).json('User Deleted Successfully');
+    }
+    catch(err){
+        next(err);
+    }
+}
