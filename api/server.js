@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
+import listingRouter from './routes/listing.route.js';
 import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -13,7 +14,7 @@ const app = express();
 dotenv.config();
  
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_CONNECTION_STRING)
+await mongoose.connect(process.env.MONGO_CONNECTION_STRING)
 .then(() => {
     console.log('Connected to MongoDB');
 }
@@ -32,6 +33,8 @@ app.use(cookieParser());
 // routes middlewares
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/listing', listingRouter);
+
 
 // error handling middleware
 app.use((err,req,res,next)=>{
