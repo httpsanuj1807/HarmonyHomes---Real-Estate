@@ -35,7 +35,7 @@ export default function Profile() {
     const storage = getStorage(app);
 
     // now we have access to firebase storage, now the task is to create file reference , so for that we have to provide the path where we have to store our file, maybe in which /folder/name. But in our case we are not storing it in any folder, we simply want that to be saved by its name in root storage, so we are simply passing name
-    const fileName = file.name;
+    const fileName = new Date().getTime() + file.name;
     const storageRef = ref(storage, fileName);
 
     // now the task is to upload file, now we have two functions to upload, one is uploadBytes and other is uploadBytesResumables, we will use second one because we want to track out upload and also may modify in between like cancel , pause , resume
