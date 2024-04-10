@@ -16,7 +16,7 @@ function OAuth() {
             const info = {
                 name : result.user.displayName,
                 email : result.user.email,
-                photo : result.user.photoURL,
+                photo : 'https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?size=626&ext=jpg&ga=GA1.1.2136921463.1712735858&semt=ais',
             }
             const res = await fetch('/api/auth/google',{
                 method: 'POST',

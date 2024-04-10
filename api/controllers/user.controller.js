@@ -1,6 +1,7 @@
 import { errorHandler } from "../utils/error.js";
 import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
+import Listing from "../models/listing.model.js";
 
 export const updateProfile = async(req, res, next) => {
     if(req.params.id != req.user.id){
@@ -39,5 +40,20 @@ export const deleteProfile = async(req, res, next) => {
     }
     catch(err){
         next(err);
+    }
+}
+
+export const showUserListings = async(req, res, next) => {
+    if(req.params.id === req.user.id){
+        try{
+            const listings = await Listing.find({userRef : req.params.id});
+            res.status(200).json(listings);
+        }
+        catch(err){
+            next(err);
+        }
+    }
+    else{
+        next(errorHandler(401, 'Unauthorised Access'));
     }
 }

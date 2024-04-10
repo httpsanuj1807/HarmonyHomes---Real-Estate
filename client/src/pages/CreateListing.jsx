@@ -112,6 +112,7 @@ function CreateListing() {
   };
 
   const handleFormChange = (e) => {
+    setFormError(false);
     if(e.target.id == 'sale' || e.target.id === 'rent'){
       setFormData(
         {
@@ -137,7 +138,7 @@ function CreateListing() {
   const handleFormSubmit = async(e) => {
     e.preventDefault();
     if(formData.imageUrls.length < 1){
-     return setFormError('You must upload atleast 1 image')
+      return setImageUploadError('You must upload atleast 1 image');
     }
     if(+formData.discountPrice > +formData.regularPrice){
       return setFormError('Discount price must be lower than the regular price');
