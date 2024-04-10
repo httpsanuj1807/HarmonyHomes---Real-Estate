@@ -21,6 +21,7 @@ export default function Profile() {
   const [isUpdateSucces, setIsUpdateSuccess] = useState(false);
   const [myListings, setMyListings] = useState([]);
   const [myListingsError, setMyListingsError] = useState(false);
+  const [deleteError, setDeleteError] = useState(false);
   useEffect(()=>{
     if(file){
       if(file.type.split('/')[0] !== 'image'){
@@ -156,6 +157,28 @@ export default function Profile() {
     }
   }
 
+  const handleDeleteListing = async(listingId) => {
+    setDeleteError(false);
+    try{
+      const res = await fetch(`/api/listing/delete/${listingId}`, {
+        method : 'DELETE',
+      });
+
+      const data = await res.json();
+
+      if(data.success === false){
+        setDeleteError(data.message);
+      }
+      setMyListings((prevListing) => {
+        return prevListing.filter((listing) => listing._id != listingId);
+      });
+
+    }
+    catch(err){
+      setDeleteError(err.message);
+    }
+  }
+  
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='font-semibold text-3xl my-7 text-center'>Profile</h1>
@@ -200,8 +223,8 @@ export default function Profile() {
                     <Link to={`/listing/${listing._id}`}  className='font-semibold text-slate-700 hover:underline truncate'>{listing.title}</Link>
                   </div>
                   <div className='flex flex-col justify-center items-center'>
-                    <button className='text-red-700' type='button'>DELETE</button>
-                    <button className='text-green-700' type='button'>EDIT</button>
+                    <button onClick={() => handleDeleteListing(listing._id)} className='text-red-700 hover:opacity-90' type='button'>DELETE</button>
+                    <button className='text-green-700 hover:opacity-90' type='button'>EDIT</button>
                   </div>
 
                 </div>
