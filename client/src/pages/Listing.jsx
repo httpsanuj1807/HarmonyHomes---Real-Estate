@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import {useSelector} from 'react-redux'
 import SwiperCore from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css/bundle";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaBed, FaBath, FaParking, FaChair } from "react-icons/fa";
+import ContactForm from '../components/ContactForm'
 
 function Listing() {
+  const { currentUser } = useSelector(state => state.user);
   SwiperCore.use([Navigation]);
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [listing, setListing] = useState(null);
-  console.log(typeof listing);
-  console.log(listing);
+  const [showForm, setShowForm] = useState(false);
+  
   useEffect(() => {
     const getListingDetails = async () => {
       setLoading(true);
@@ -74,6 +77,7 @@ function Listing() {
                 "en-US",
                 { style: "currency", currency: "USD", minimumFractionDigits: 0 }
               )}
+              {listing.type === 'rent' ? '/ month': ''}
             </p>
 
             <div className="flex gap-2 items-center">
@@ -87,7 +91,8 @@ function Listing() {
               <span className="font-semibold">Description: </span>
               <span className='text-slate-700'>{listing.description}</span>
             </div>
-            <div className=" flex gap-4 sm:gap-6 flex-wrap">
+            <div className='flex gap-4 sm:gap-6 flex-wrap mb-4'>
+
               <div className="flex items-center gap-2 text-green-900 font-semibold">
                 <FaBed/>
                 <p>{listing.bedrooms} {listing.bedrooms > 1 ? 'Beds' : 'Bed'}</p>
@@ -105,8 +110,12 @@ function Listing() {
                 <FaChair/>
                 <p>{listing.furnished  ? 'Furnished' : 'Not Furnished'}</p>
               </div>
-              
             </div>
+            {!showForm && currentUser && listing.userRef != currentUser._id && (<button onClick={() => {
+              setShowForm((prevState) => !prevState)
+            }} className="bg-slate-700 p-3 rounded-lg text-white font-semibold uppercase hover:opacity-95" type='button'>Contact Landlord</button>)}
+            {showForm && (<ContactForm listing={listing}/>)}
+            {showForm && (<button className="bg-red-600 w-1/6 p-3 text-white rounded-lg" onClick={() => setShowForm((prevState) => !prevState)}>Close message box.</button>)}
           </div>
         </div>
       )}
