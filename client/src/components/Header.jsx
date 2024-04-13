@@ -1,10 +1,32 @@
 import {FaSearch} from 'react-icons/fa';
-import {Link} from 'react-router-dom';
-import {useSelector} from 'react-redux'
-
+import {Link, useNavigate} from 'react-router-dom';
+import {useSelector} from 'react-redux';
+import { useState, useEffect } from 'react';
 
 export default function Header() {
     const {currentUser} = useSelector(state => state.user); 
+    const [searchTerm, setSearchTerm] = useState('');
+    const navigate = useNavigate();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const urlParams = new URLSearchParams(window.location.search);
+        if(searchTerm){ 
+            urlParams.set('searchTerm', searchTerm);
+        }
+        else{
+            urlParams.delete('searchTerm');
+        }
+        const searchQuery = urlParams.toString();
+        navigate(`/search?${searchQuery}`);    
+    }
+
+    console.log(searchTerm);
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search);
+        setSearchTerm(urlParams.get('searchTerm') || '');
+    }, [location.search]);
+
   return (
     <header className='bg-slate-200 shadow-md'>
         <div className='flex justify-between items-center max-w-6xl mx-auto p-2'>
@@ -14,9 +36,11 @@ export default function Header() {
                 <span className='text-slate-700'>Homes</span>
             </h1>
             </Link>
-            <form className='bg-slate-100  p-3 rounded-lg flex items-center'>
-                <input type='text' placeholder="Search..." className=' bg-transparent focus:outline-none w-32 md:w-64'/>
+            <form onSubmit={handleSubmit} className='bg-slate-100  p-3 rounded-lg flex items-center'>
+                <input type='text' placeholder="Search..." className=' bg-transparent focus:outline-none w-32 md:w-64' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                <button>
                 <FaSearch className='text-slate-600 text-lg'/>
+                </button>
             </form>
             <ul className='flex gap-4'>
                 <Link to='/'>
