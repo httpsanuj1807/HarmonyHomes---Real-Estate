@@ -115,7 +115,9 @@ function Listing() {
               setShowForm((prevState) => !prevState)
             }} className="bg-slate-700 p-3 rounded-lg text-white font-semibold uppercase hover:opacity-95" type='button'>Contact Landlord</button>)}
             {showForm && (<ContactForm listing={listing}/>)}
-            {showForm && (<button className="bg-red-600 w-1/6 p-3 text-white rounded-lg" onClick={() => setShowForm((prevState) => !prevState)}>Close message box.</button>)}
+            <div className="flex justify-end">
+            {showForm && (<button className="bg-red-600 w-20 p-2 text-white rounded-lg" onClick={() => setShowForm((prevState) => !prevState)}>Close</button>)}
+            </div>
           </div>
         </div>
       )}
