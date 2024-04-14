@@ -171,7 +171,7 @@ function Search() {
         {!errorFetchingListings && !loading  && listings.length == 0 && <p  className="text-center p-4">No listing found.</p>}
         {errorFetchingListings && <p className="text-red-500 text-center p-4">Error fetching listings currently. Try again</p>}
         {!errorFetchingListings && !loading && listings.length > 0 && (
-          <div className="flex flex-wrap ">
+          <div className="flex flex-wrap gap-x-1 justify-around gap-y-8">
             {listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
             ))} 
