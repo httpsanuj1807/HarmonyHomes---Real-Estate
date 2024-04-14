@@ -4,7 +4,7 @@ import {FaLocationDot} from 'react-icons/fa6';
 import { FaBed, FaBath, FaParking, FaChair } from "react-icons/fa";
 function ListingItem({listing}) {
   return (
-    <div className='bg-white overflow-hidden rounded-lg shadow-md hover:shadow-lg transition:shadow w-full xl:w-[350px]'>
+    <div className='bg-white overflow-hidden rounded-lg shadow-md hover:shadow-lg transition:shadow w-full sm:w-[300px]'>
       <Link to={`/listing/${listing._id}`}>
         <img className='h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300' src={listing.imageUrls[0]} alt='listing-photo' />
         <div className='flex flex-col pt-3 gap-1 w-full'>
