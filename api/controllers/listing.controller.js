@@ -75,7 +75,7 @@ export const getListing = async(req, res, next) => {
 
 export const getAllListings = async(req, res, next) => {
   try{
-    const limit = req.query.limit || 9;
+    const limit = req.query.limit || 8;
     const startIndex = req.query.startIndex || 0;
     let offer = req.query.offer;
 

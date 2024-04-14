@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import {useNavigate} from 'react-router-dom';
 import ListingItem from "../components/ListingItem";
+import { set } from "mongoose";
 function Search() {
+  const [showMore, setShowMore] = useState(false);
   const [errorFetchingListings, setErrorFetchingListings] = useState(false);
   const [loading, setLoading] = useState(false);
   const [listings, setListings] = useState([]);
@@ -15,7 +17,7 @@ function Search() {
     sort : 'createdAt',
     order: 'desc'
   });
-  console.log(listings);
+  
   useEffect(()=>{
     
     const fetchUrlParams = async() => {
@@ -39,6 +41,7 @@ function Search() {
     }
     const fetchListing = async() => {
       setLoading(true);
+      setShowMore(false);
       setErrorFetchingListings(false);
       const urlParams = new URLSearchParams(location.search);
       const searchQuery = urlParams.toString();
@@ -53,6 +56,12 @@ function Search() {
 
         setListings(data);
         setLoading(false);
+        if(data.length >= 8){
+          setShowMore(true);
+        }
+        else{
+          setShowMore(false);
+        }
         setErrorFetchingListings(false);
       }
       catch(err){
@@ -96,8 +105,22 @@ function Search() {
     urlParams.set('order', sideBarData.order);
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
-
   }
+
+  const onShowMoreClick = async() => {
+    const numberOfListing = listings.length; 
+    const startIndex = numberOfListing;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('startIndex', startIndex);
+    const searchQuery = urlParams.toString(); 
+    const res = await fetch(`/api/listing/get?${searchQuery}`);
+    const data = await res.json();
+    if(data.length < 8){
+      setShowMore(false);
+    }
+    setListings([...listings, ...data]);
+  }
+
   return (
     <div className="flex flex-col md:flex-row">
       <div className="border-b-2 p-7 flex md:border-r-2 md:min-h-screen">
@@ -177,8 +200,10 @@ function Search() {
             ))} 
           </div>
         )}
+        {showMore && (<div className="flex justify-center p-5"><button onClick={onShowMoreClick} className="text-green-900 underline">Show More { '>>'}</button></div>)}
       </div>
     </div>
+
   );
 }
 

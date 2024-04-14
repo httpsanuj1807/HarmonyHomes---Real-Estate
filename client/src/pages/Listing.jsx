@@ -22,12 +22,10 @@ function Listing() {
     const getListingDetails = async () => {
       setLoading(true);
       setError(null);
-
       try {
         const res = await fetch(`/api/listing/get/${params.listingId}`);
         const data = await res.json();
         if (data.success === false) {
-          console.log(data.message);
           setLoading(false);
           setError(data.message);
           return;
