@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import {useNavigate} from 'react-router-dom';
+import ListingItem from "../components/ListingItem";
 function Search() {
-  const [errorFetchingListings, setErrorFetchingListings] = useState(undefined);
+  const [errorFetchingListings, setErrorFetchingListings] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [listings, setListings] = useState({});
+  const [listings, setListings] = useState([]);
   const navigate = useNavigate();
   const [sideBarData, setSideBarData] = useState({
     searchTerm : '',
@@ -38,7 +39,7 @@ function Search() {
     }
     const fetchListing = async() => {
       setLoading(true);
-      setErrorFetchingListings(undefined);
+      setErrorFetchingListings(false);
       const urlParams = new URLSearchParams(location.search);
       const searchQuery = urlParams.toString();
       try{
@@ -52,7 +53,7 @@ function Search() {
 
         setListings(data);
         setLoading(false);
-        setErrorFetchingListings(undefined);
+        setErrorFetchingListings(false);
       }
       catch(err){
         setLoading(false);
@@ -163,11 +164,19 @@ function Search() {
         </form>
       </div>
       <div className="p-7 flex-1">
-        <p className="text-3xl font-semibold text-slate-700">
+        <p className="text-3xl mb-4 font-semibold text-slate-700">
           Listing results:
         </p>
-        {loading && <p>Hold tight, fetching listings for you...</p>}
-        {errorFetchingListings && <p>{errorFetchingListings}</p>}
+        {loading && <p className="text-center p-4">Hold tight, fetching listings for you...</p>}
+        {!errorFetchingListings && !loading  && listings.length == 0 && <p  className="text-center p-4">No listing found.</p>}
+        {errorFetchingListings && <p className="text-red-500 text-center p-4">Error fetching listings currently. Try again</p>}
+        {!errorFetchingListings && !loading && listings.length > 0 && (
+          <div className="flex flex-wrap ">
+            {listings.map((listing) => (
+              <ListingItem key={listing._id} listing={listing} />
+            ))} 
+          </div>
+        )}
       </div>
     </div>
   );

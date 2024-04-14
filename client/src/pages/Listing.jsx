@@ -73,7 +73,10 @@ function Listing() {
           <div className="flex flex-col my-7 p-5 gap-4 sm:max-w-5xl sm:mx-auto">
             <p className="text-2xl font-bold - $">
               {listing.title} -{" "}
-              {(listing.regularPrice - listing.discountPrice).toLocaleString(
+              {listing.offer ? listing.discountPrice.toLocaleString(
+                "en-US",
+                { style: "currency", currency: "USD", minimumFractionDigits: 0 }
+              ) : listing.regularPrice.toLocaleString(
                 "en-US",
                 { style: "currency", currency: "USD", minimumFractionDigits: 0 }
               )}
@@ -84,9 +87,16 @@ function Listing() {
               <p className="text-green-900"><FaLocationDot /></p>
               <p className="text-slate-600 font-semibold">{listing.address}</p>
             </div>
-            <p className="w-1/3 sm:w-1/6 p-1 bg-red-900 rounded-lg text-center text-white font-semibold">
-              {listing.type === 'sale' ? 'For Sale' : 'For Rent'}
-            </p>
+            <div className='flex gap-4'>
+              <p className='bg-red-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
+                {listing.type === 'rent' ? 'For Rent' : 'For Sale'}
+              </p>
+              {listing.offer && (
+                <p className='bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
+                  ${+listing.regularPrice - +listing.discountPrice} OFF
+                </p>
+              )}
+            </div>
             <div>
               <span className="font-semibold">Description: </span>
               <span className='text-slate-700'>{listing.description}</span>
