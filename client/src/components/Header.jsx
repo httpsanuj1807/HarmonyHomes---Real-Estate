@@ -20,8 +20,6 @@ export default function Header() {
         const searchQuery = urlParams.toString();
         navigate(`/search?${searchQuery}`);    
     }
-
-    console.log(searchTerm);
     useEffect(() => {
         const urlParams = new URLSearchParams(location.search);
         setSearchTerm(urlParams.get('searchTerm') || '');
