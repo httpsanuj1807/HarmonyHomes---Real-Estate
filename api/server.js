@@ -6,7 +6,7 @@ import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js'; 
 import listingRouter from './routes/listing.route.js';
 import cookieParser from 'cookie-parser';
-import path from 'path';
+
 
 const app = express();
 
@@ -25,7 +25,7 @@ await mongoose.connect(process.env.MONGO_CONNECTION_STRING)
 }
 );
 
-const _dirname = path.resolve();
+
 
 
 // Middlewares
@@ -37,14 +37,6 @@ app.use(cookieParser());
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/listing', listingRouter);
-
-app.use(express.static(path.join(_dirname, '/client/dist')));
-
-app.get('*', (req, res)=>{
-    res.sendFile(path.join(_dirname, 'client', 'dist' , 'index.html'));
-}
-);
-
 
 // error handling middleware
 app.use((err,req,res,next)=>{
