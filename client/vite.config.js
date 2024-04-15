@@ -14,5 +14,8 @@ export default defineConfig({
         }
       })
     }
-  }
+  }, 
+  resolve: {
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.json'],
+  },
 });
